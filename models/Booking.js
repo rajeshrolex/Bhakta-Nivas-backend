@@ -10,7 +10,7 @@ const bookingSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Lodge',
         required: true
-    },4
+    },
     lodgeName: String,
     // Flattened room info
     roomType: String,
