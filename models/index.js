@@ -3,11 +3,13 @@ const Room = require('./Room');
 const Booking = require('./Booking');
 const User = require('./User');
 const Review = require('./Review');
+const Temple = require('./Temple');
 
 module.exports = {
     Lodge,
     Room,
     Booking,
     User,
-    Review
+    Review,
+    Temple
 };

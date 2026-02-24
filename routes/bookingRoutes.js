@@ -205,7 +205,9 @@ router.post('/', async (req, res) => {
                 paymentId: req.body.paymentDetails?.paymentId,
                 paymentMethod: paymentMethod, // Use normalized payment method
                 paymentStatus: paymentStatus, // Use determined payment status
-                lodgeAdminEmail
+                lodgeAdminEmail,
+                lodgePhone: lodge.phone || '',
+                lodgeWhatsapp: lodge.whatsapp || lodge.phone || ''
             }).then(result => {
                 console.log('Email notifications sent:', result);
             }).catch(err => {

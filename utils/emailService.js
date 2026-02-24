@@ -136,9 +136,17 @@ const sendGuestConfirmation = async (bookingDetails) => {
                             </p>
                         </div>
                         
-                        <p style="color: #6b7280; font-size: 14px;">
-                            For any queries, contact us at: <strong>${process.env.SMTP_EMAIL}</strong>
-                        </p>
+                        <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #16a34a;">
+                            <p style="margin: 0 0 10px 0; color: #166534; font-weight: bold; font-size: 15px;">📞 Lodge Contact Details</p>
+                            ${bookingDetails.lodgePhone ? `
+                            <p style="margin: 0 0 5px 0; color: #374151; font-size: 14px;">
+                                📱 Call: <a href="tel:${bookingDetails.lodgePhone.replace(/\s/g, '')}" style="color: #2563eb; text-decoration: none; font-weight: bold;">${bookingDetails.lodgePhone}</a>
+                            </p>` : ''}
+                            ${bookingDetails.lodgeWhatsapp ? `
+                            <p style="margin: 0; color: #374151; font-size: 14px;">
+                                💬 WhatsApp: <a href="https://wa.me/${bookingDetails.lodgeWhatsapp.replace(/[^0-9]/g, '')}?text=Hi, my booking ID is ${bookingDetails.bookingId}" style="color: #16a34a; text-decoration: none; font-weight: bold;">${bookingDetails.lodgeWhatsapp}</a>
+                            </p>` : ''}
+                        </div>
                         
                         <p style="color: #f97316; font-size: 16px; text-align: center; margin-top: 30px;">
                             🙏 Wishing you a blessed spiritual journey! 🙏
