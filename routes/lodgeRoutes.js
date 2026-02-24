@@ -93,6 +93,21 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// Block / Unblock lodge (super_admin)
+router.patch('/:id/block-toggle', async (req, res) => {
+    try {
+        const lodge = await Lodge.findById(req.params.id);
+        if (!lodge) {
+            return res.status(404).json({ message: 'Lodge not found' });
+        }
+        lodge.isBlocked = !lodge.isBlocked;
+        await lodge.save();
+        res.json({ isBlocked: lodge.isBlocked, message: lodge.isBlocked ? 'Lodge blocked successfully' : 'Lodge unblocked successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // Delete lodge (admin)
 router.delete('/:id', async (req, res) => {
     try {

@@ -49,7 +49,11 @@ const lodgeSchema = new mongoose.Schema({
     address: String,
     phone: String,
     whatsapp: String,
-    description: String
+    description: String,
+    isBlocked: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true,
     toJSON: { virtuals: true },
