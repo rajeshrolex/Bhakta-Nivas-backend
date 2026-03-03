@@ -35,6 +35,7 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const templeRoutes = require('./routes/templeRoutes');
+const dailyPriceRoutes = require('./routes/dailyPriceRoutes');
 
 // Basic test route
 app.get('/api/test', (req, res) => {
@@ -51,6 +52,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/temples', templeRoutes);
+app.use('/api/daily-prices', dailyPriceRoutes);
 
 const PORT = process.env.PORT || 5000;
 

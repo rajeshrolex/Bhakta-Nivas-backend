@@ -4,6 +4,7 @@ const Booking = require('./Booking');
 const User = require('./User');
 const Review = require('./Review');
 const Temple = require('./Temple');
+const DailyPrice = require('./DailyPrice');
 
 module.exports = {
     Lodge,
@@ -11,5 +12,7 @@ module.exports = {
     Booking,
     User,
     Review,
-    Temple
+    Temple,
+    DailyPrice
 };
+
