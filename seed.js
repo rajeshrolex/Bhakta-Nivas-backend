@@ -19,100 +19,101 @@ const connectDB = async () => {
 // Lodges data (same as before)
 const lodgesData = [
     {
-        name: "Bhakti Nivas",
-        slug: "bhakti-nivas",
+        name: "Shri Hari Retreat",
+        slug: "shri-hari-retreat",
         images: [
-            "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800",
-            "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800",
-            "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800"
+            "https://images.unsplash.com/photo-1542314831-c6a4d14ca294?w=800",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800",
+            "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800"
         ],
-        distance: "500m",
+        distance: "200m",
         distanceType: "walkable",
-        rating: 4.3,
-        reviewCount: 89,
-        priceStarting: 500,
-        availability: "limited",
-        amenities: ["wifi", "parking", "hotWater", "restaurant"],
-        address: "Main Road, Mantralayam",
-        phone: "+91 9876543212",
-        whatsapp: "+91 9876543212",
-        description: "Budget-friendly accommodation with all essential amenities.",
+        rating: 4.8,
+        reviewCount: 342,
+        priceStarting: 1200,
+        availability: "available",
+        amenities: ["wifi", "parking", "ac", "restaurant", "hotWater"],
+        address: "Near Main Gate, Mantralayam",
+        phone: "+91 9123456780",
+        whatsapp: "+91 9123456780",
+        description: "A serene and modern retreat just steps away from the Sri Raghavendra Swamy Mutt. We offer peaceful AC and Non-AC rooms with all premium amenities to make your pilgrimage comfortable.",
         rooms: [
-            { type: "Non-AC", name: "Basic Room", price: 500, maxOccupancy: 2, available: 2, amenities: ["hotWater"] },
-            { type: "AC", name: "AC Room", price: 900, maxOccupancy: 2, available: 1, amenities: ["ac", "hotWater", "wifi", "tv"] }
+            { type: "Non-AC", name: "Standard Room", price: 1200, maxOccupancy: 2, available: 5, amenities: ["hotWater", "wifi"] },
+            { type: "AC", name: "Premium AC Suite", price: 2100, maxOccupancy: 3, available: 3, amenities: ["ac", "hotWater", "wifi", "tv", "balcony"] }
         ]
     },
     {
-        name: "Guru Krupa Lodge",
-        slug: "guru-krupa-lodge",
+        name: "Pavithra Residency",
+        slug: "pavithra-residency",
         images: [
-            "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
-            "https://images.unsplash.com/photo-1587985064135-0366536eab42?w=800",
-            "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800"
+            "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800",
+            "https://images.unsplash.com/photo-1537240923712-ae0e7cf73ea3?w=800",
+            "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800"
         ],
-        distance: "800m",
+        distance: "600m",
         distanceType: "walkable",
-        rating: 4.2,
-        reviewCount: 67,
-        priceStarting: 450,
+        rating: 4.5,
+        reviewCount: 189,
+        priceStarting: 800,
         availability: "available",
         amenities: ["parking", "hotWater", "powerBackup"],
-        address: "Station Road, Mantralayam",
-        phone: "+91 9876543213",
-        whatsapp: "+91 9876543213",
-        description: "Affordable accommodation suitable for budget travelers.",
+        address: "Market Road, Mantralayam",
+        phone: "+91 9876543200",
+        whatsapp: "+91 9876543200",
+        description: "Comfortable middle-tier residency catering to families and groups. Focuses on cleanliness and quick room service.",
         rooms: [
-            { type: "Non-AC", name: "Standard Room", price: 450, maxOccupancy: 2, available: 10, amenities: ["hotWater"] },
-            { type: "Non-AC", name: "Triple Sharing", price: 650, maxOccupancy: 3, available: 5, amenities: ["hotWater"] }
+            { type: "Non-AC", name: "Double Room", price: 800, maxOccupancy: 2, available: 8, amenities: ["hotWater"] },
+            { type: "AC", name: "Family AC Room", price: 1500, maxOccupancy: 4, available: 4, amenities: ["ac", "hotWater", "tv"] }
         ]
     },
     {
-        name: "Divine Stay Suites",
-        slug: "divine-stay-suites",
+        name: "Mantralayam Grand Lodge",
+        slug: "mantralayam-grand-lodge",
         images: [
+            "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800",
             "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800",
-            "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800",
-            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800"
-        ],
-        distance: "1.2km",
-        distanceType: "auto",
-        rating: 4.6,
-        reviewCount: 145,
-        priceStarting: 1000,
-        availability: "available",
-        amenities: ["wifi", "parking", "hotWater", "lift", "ac", "powerBackup", "restaurant"],
-        address: "Highway Road, Mantralayam",
-        phone: "+91 9876543214",
-        whatsapp: "+91 9876543214",
-        description: "Premium accommodation with modern facilities.",
-        rooms: [
-            { type: "AC", name: "Superior AC Room", price: 1000, maxOccupancy: 2, available: 6, amenities: ["ac", "hotWater", "wifi", "tv", "minibar"] },
-            { type: "Family", name: "Deluxe Family Suite", price: 2000, maxOccupancy: 5, available: 3, amenities: ["ac", "hotWater", "wifi", "tv", "minibar", "extraBed", "balcony"] },
-            { type: "AC", name: "Executive Room", price: 1500, maxOccupancy: 2, available: 4, amenities: ["ac", "hotWater", "wifi", "tv", "minibar", "workDesk"] }
-        ]
-    },
-    {
-        name: "Sree Venkateswara Lodge",
-        slug: "sree-venkateswara-lodge",
-        images: [
             "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800",
-            "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800",
-            "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800"
+            "https://images.unsplash.com/photo-1587985064135-0366536eab42?w=800"
         ],
         distance: "1.5km",
         distanceType: "auto",
-        rating: 4.0,
-        reviewCount: 52,
-        priceStarting: 550,
-        availability: "full",
-        amenities: ["parking", "hotWater", "wifi"],
-        address: "Bus Stand Road, Mantralayam",
-        phone: "+91 9876543215",
-        whatsapp: "+91 9876543215",
-        description: "Well-maintained lodge with easy access to bus stand.",
+        rating: 4.1,
+        reviewCount: 76,
+        priceStarting: 600,
+        availability: "available",
+        amenities: ["wifi", "parking", "hotWater", "lift", "powerBackup"],
+        address: "Ring Road bypass, Mantralayam",
+        phone: "+91 9988776655",
+        whatsapp: "+91 9988776655",
+        description: "A large lodge located slightly outside the busy center. Quiet environment with spacious parking facilities.",
         rooms: [
-            { type: "Non-AC", name: "Standard Room", price: 550, maxOccupancy: 2, available: 0, amenities: ["hotWater", "wifi"] },
-            { type: "AC", name: "AC Room", price: 950, maxOccupancy: 2, available: 0, amenities: ["ac", "hotWater", "wifi", "tv"] }
+            { type: "Non-AC", name: "Budget Double", price: 600, maxOccupancy: 2, available: 10, amenities: ["hotWater", "wifi"] },
+            { type: "AC", name: "Standard AC", price: 1100, maxOccupancy: 2, available: 6, amenities: ["ac", "hotWater", "wifi", "tv"] },
+            { type: "AC", name: "Grand Family Group", price: 2500, maxOccupancy: 6, available: 2, amenities: ["ac", "hotWater", "wifi", "tv", "extraBed"] }
+        ]
+    },
+    {
+        name: "Yatri Nivas by Swamy",
+        slug: "yatri-nivas-by-swamy",
+        images: [
+            "https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?w=800",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800",
+            "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800"
+        ],
+        distance: "1.0km",
+        distanceType: "auto",
+        rating: 4.0,
+        reviewCount: 110,
+        priceStarting: 500,
+        availability: "limited",
+        amenities: ["parking", "hotWater"],
+        address: "Temple bypass, Mantralayam",
+        phone: "+91 9123459990",
+        whatsapp: "+91 9123459990",
+        description: "Basic accommodation built specifically for pilgrims. Safe, clean, and extremely affordable.",
+        rooms: [
+            { type: "Non-AC", name: "Basic Room", price: 500, maxOccupancy: 2, available: 3, amenities: ["hotWater"] },
+            { type: "Non-AC", name: "4-Bed Setup", price: 800, maxOccupancy: 4, available: 1, amenities: ["hotWater"] }
         ]
     }
 ];
