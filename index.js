@@ -36,6 +36,7 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const templeRoutes = require('./routes/templeRoutes');
 const dailyPriceRoutes = require('./routes/dailyPriceRoutes');
+const blockedDateRoutes = require('./routes/blockedDateRoutes');
 
 // Basic test route
 app.get('/api/test', (req, res) => {
@@ -53,6 +54,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/temples', templeRoutes);
 app.use('/api/daily-prices', dailyPriceRoutes);
+app.use('/api/blocked-dates', blockedDateRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -1,12 +1,27 @@
 const express = require('express');
 const router = express.Router();
 const { Lodge, Room } = require('../models');
+const BlockedDate = require('../models/BlockedDate');
 
 // Get all lodges (with rooms)
 router.get('/', async (req, res) => {
     try {
         const lodges = await Lodge.find().sort({ createdAt: -1 }).populate('rooms');
-        res.json(lodges);
+
+        // Fetch all blocked dates to attach to the lodges
+        const allBlockedDates = await BlockedDate.find();
+
+        const lodgesWithBlocks = lodges.map(lodge => {
+            const lodgeBlockedDates = allBlockedDates
+                .filter(b => b.lodgeId.toString() === lodge._id.toString())
+                .map(b => b.date);
+
+            const lodgeData = lodge.toJSON();
+            lodgeData.blockedDates = lodgeBlockedDates;
+            return lodgeData;
+        });
+
+        res.json(lodgesWithBlocks);
     } catch (err) {
         console.error('Error fetching lodges:', err);
         res.status(500).json({ message: err.message });
@@ -21,7 +36,12 @@ router.get('/:slug', async (req, res) => {
         if (!lodge) {
             return res.status(404).json({ message: 'Lodge not found' });
         }
-        res.json(lodge);
+
+        const blockedDates = await BlockedDate.find({ lodgeId: lodge._id });
+        const lodgeData = lodge.toJSON();
+        lodgeData.blockedDates = blockedDates.map(b => b.date);
+
+        res.json(lodgeData);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
