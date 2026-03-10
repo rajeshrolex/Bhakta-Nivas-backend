@@ -25,9 +25,17 @@ const templeSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    nearbyRailwayStationTitle: {
+        type: String,
+        default: 'Nearby Railway Station'
+    },
     nearbyRailwayStation: {
         type: String,
         default: ''
+    },
+    busTimingsTitle: {
+        type: String,
+        default: 'Bus Timings'
     },
     busTimings: {
         type: String,
