@@ -254,8 +254,11 @@ router.put('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Booking not found' });
         }
 
-        // If booking is cancelled or checked-out, restore room availability
-        if ((newStatus === 'cancelled' || newStatus === 'checked-out') && existingBooking) {
+        // ONLY restore room if transitioning FROM an active status TO cancelled/checked-out
+        const wasActive = existingBooking.status !== 'cancelled' && existingBooking.status !== 'checked-out';
+        const isNowInactive = newStatus === 'cancelled' || newStatus === 'checked-out';
+
+        if (wasActive && isNowInactive && existingBooking) {
             const roomsToRestore = parseInt(existingBooking.rooms) || 1;
             if (existingBooking.roomName && existingBooking.lodgeId) {
                 await Room.findOneAndUpdate(
@@ -263,9 +266,18 @@ router.put('/:id', async (req, res) => {
                         lodgeId: existingBooking.lodgeId,
                         name: existingBooking.roomName
                     },
-                    {
-                        $inc: { available: roomsToRestore }
-                    }
+                    [
+                        {
+                            $set: {
+                                available: {
+                                    $min: [
+                                        { $add: ["$available", roomsToRestore] },
+                                        { $ifNull: ["$totalRooms", "$available"] } // Fallback to current available if totalRooms is missing
+                                    ]
+                                }
+                            }
+                        }
+                    ]
                 );
                 console.log(`Room availability restored (${newStatus}): ${existingBooking.roomName} increased by ${roomsToRestore}`);
             }

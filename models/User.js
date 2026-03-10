@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -32,6 +33,19 @@ const userSchema = new mongoose.Schema({
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
+});
+
+// Pre-save hook to hash password
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (err) {
+        next(err);
+    }
 });
 
 userSchema.virtual('id').get(function () {

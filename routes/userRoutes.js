@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const { User, Lodge } = require('../models');
 
 // Get all users
@@ -39,7 +40,7 @@ router.post('/', async (req, res) => {
         const user = await User.create({
             name,
             email,
-            password, // In production, hash this!
+            password, // Hashing handled by User model pre-save hook
             role: role || 'admin',
             lodgeId: lodgeId || null
         });
@@ -108,17 +109,25 @@ router.put('/:userId', async (req, res) => {
             updateData.password = password; // In production, hash this!
         }
 
-        const user = await User.findByIdAndUpdate(
-            req.params.userId,
-            updateData,
-            { new: true }
-        ).select('-password');
-
+        const user = await User.findById(req.params.userId);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        res.json({ success: true, message: 'User updated successfully', user });
+        user.name = name || user.name;
+        user.email = email || user.email;
+        user.role = role || user.role;
+        user.lodgeId = lodgeId !== undefined ? lodgeId : user.lodgeId;
+
+        if (password) {
+            user.password = password;
+        }
+
+        await user.save();
+        const updatedUser = user.toObject();
+        delete updatedUser.password;
+
+        res.json({ success: true, message: 'User updated successfully', user: updatedUser });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -136,12 +145,19 @@ router.put('/password/:userId', async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        // Check current password (in production, compare hashed passwords)
-        if (user.password !== currentPassword) {
+        // Check current password using bcrypt or fallback to plaintext
+        let isMatch = false;
+        if (user.password.startsWith('$2')) {
+            isMatch = await bcrypt.compare(currentPassword, user.password);
+        } else {
+            isMatch = currentPassword === user.password;
+        }
+
+        if (!isMatch) {
             return res.status(400).json({ success: false, message: 'Current password is incorrect' });
         }
 
-        // Update password (in production, hash the password)
+        // Set new password (hashing handled by User model pre-save hook)
         user.password = newPassword;
         await user.save();
 

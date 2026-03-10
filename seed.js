@@ -38,8 +38,8 @@ const lodgesData = [
         whatsapp: "+91 9123456780",
         description: "A serene and modern retreat just steps away from the Sri Raghavendra Swamy Mutt. We offer peaceful AC and Non-AC rooms with all premium amenities to make your pilgrimage comfortable.",
         rooms: [
-            { type: "Non-AC", name: "Standard Room", price: 1200, maxOccupancy: 2, available: 5, amenities: ["hotWater", "wifi"] },
-            { type: "AC", name: "Premium AC Suite", price: 2100, maxOccupancy: 3, available: 3, amenities: ["ac", "hotWater", "wifi", "tv", "balcony"] }
+            { type: "Non-AC", name: "Standard Room", price: 1200, maxOccupancy: 2, available: 5, totalRooms: 5, amenities: ["hotWater", "wifi"] },
+            { type: "AC", name: "Premium AC Suite", price: 2100, maxOccupancy: 3, available: 3, totalRooms: 3, amenities: ["ac", "hotWater", "wifi", "tv", "balcony"] }
         ]
     },
     {
@@ -62,8 +62,8 @@ const lodgesData = [
         whatsapp: "+91 9876543200",
         description: "Comfortable middle-tier residency catering to families and groups. Focuses on cleanliness and quick room service.",
         rooms: [
-            { type: "Non-AC", name: "Double Room", price: 800, maxOccupancy: 2, available: 8, amenities: ["hotWater"] },
-            { type: "AC", name: "Family AC Room", price: 1500, maxOccupancy: 4, available: 4, amenities: ["ac", "hotWater", "tv"] }
+            { type: "Non-AC", name: "Double Room", price: 800, maxOccupancy: 2, available: 8, totalRooms: 8, amenities: ["hotWater"] },
+            { type: "AC", name: "Family AC Room", price: 1500, maxOccupancy: 4, available: 4, totalRooms: 4, amenities: ["ac", "hotWater", "tv"] }
         ]
     },
     {
@@ -87,9 +87,9 @@ const lodgesData = [
         whatsapp: "+91 9988776655",
         description: "A large lodge located slightly outside the busy center. Quiet environment with spacious parking facilities.",
         rooms: [
-            { type: "Non-AC", name: "Budget Double", price: 600, maxOccupancy: 2, available: 10, amenities: ["hotWater", "wifi"] },
-            { type: "AC", name: "Standard AC", price: 1100, maxOccupancy: 2, available: 6, amenities: ["ac", "hotWater", "wifi", "tv"] },
-            { type: "AC", name: "Grand Family Group", price: 2500, maxOccupancy: 6, available: 2, amenities: ["ac", "hotWater", "wifi", "tv", "extraBed"] }
+            { type: "Non-AC", name: "Budget Double", price: 600, maxOccupancy: 2, available: 10, totalRooms: 10, amenities: ["hotWater", "wifi"] },
+            { type: "AC", name: "Standard AC", price: 1100, maxOccupancy: 2, available: 6, totalRooms: 6, amenities: ["ac", "hotWater", "wifi", "tv"] },
+            { type: "AC", name: "Grand Family Group", price: 2500, maxOccupancy: 6, available: 2, totalRooms: 2, amenities: ["ac", "hotWater", "wifi", "tv", "extraBed"] }
         ]
     },
     {
@@ -112,8 +112,8 @@ const lodgesData = [
         whatsapp: "+91 9123459990",
         description: "Basic accommodation built specifically for pilgrims. Safe, clean, and extremely affordable.",
         rooms: [
-            { type: "Non-AC", name: "Basic Room", price: 500, maxOccupancy: 2, available: 3, amenities: ["hotWater"] },
-            { type: "Non-AC", name: "4-Bed Setup", price: 800, maxOccupancy: 4, available: 1, amenities: ["hotWater"] }
+            { type: "Non-AC", name: "Basic Room", price: 500, maxOccupancy: 2, available: 3, totalRooms: 3, amenities: ["hotWater"] },
+            { type: "Non-AC", name: "4-Bed Setup", price: 800, maxOccupancy: 4, available: 1, totalRooms: 1, amenities: ["hotWater"] }
         ]
     }
 ];
