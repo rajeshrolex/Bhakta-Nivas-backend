@@ -13,6 +13,10 @@ const templeSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    distance: {
+        type: String,
+        default: ''
+    },
     darshanTimings: {
         type: String,
         default: ''
