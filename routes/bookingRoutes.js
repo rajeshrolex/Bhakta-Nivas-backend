@@ -236,7 +236,7 @@ router.post('/', async (req, res) => {
         if (req.body.customerDetails?.email) {
             const protocol = req.protocol;
             const host = req.get('host');
-            const baseUrl = `${protocol}://${host}`;
+            const baseUrl = process.env.BASE_URL || `${protocol}://${host}`;
 
             sendBookingEmails({
                 bookingId,
