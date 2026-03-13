@@ -272,11 +272,11 @@ const sendAdminNotification = async (bookingDetails) => {
                             </tr>
                             <tr>
                                 <td style="padding: 8px 0; color: #6b7280;">Check-in:</td>
-                                <td style="padding: 8px 0; font-weight: bold; color: #1f2937;">${bookingDetails.checkIn} at ${bookingDetails.checkInTime || '12:00'}</td>
+                                <td style="padding: 8px 0; font-weight: bold; color: #1f2937;">${bookingDetails.checkIn} at ${formatTo12Hour(bookingDetails.checkInTime || '12:00')}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 8px 0; color: #6b7280;">Check-out:</td>
-                                <td style="padding: 8px 0; font-weight: bold; color: #1f2937;">${bookingDetails.checkOut}</td>
+                                <td style="padding: 8px 0; font-weight: bold; color: #1f2937;">${bookingDetails.checkOut} at ${bookingDetails.checkOutTime || '11:00 AM'}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 8px 0; color: #6b7280;">Guests:</td>
