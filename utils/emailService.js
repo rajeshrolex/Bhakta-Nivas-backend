@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { formatTo12Hour } = require('./timeUtils');
 
 // Create transporter with Gmail SMTP
 const createTransporter = () => {
@@ -115,11 +116,11 @@ const sendGuestConfirmation = async (bookingDetails) => {
                                 </tr>
                                 <tr>
                                     <td style="padding: 8px 0; color: #6b7280;">Check-in:</td>
-                                    <td style="padding: 8px 0; font-weight: bold; color: #1f2937;">${bookingDetails.checkIn} at ${bookingDetails.checkInTime || '12:00'}</td>
+                                    <td style="padding: 8px 0; font-weight: bold; color: #1f2937;">${bookingDetails.checkIn} at ${formatTo12Hour(bookingDetails.checkInTime || '12:00')}</td>
                                 </tr>
                                 <tr>
                                     <td style="padding: 8px 0; color: #6b7280;">Check-out:</td>
-                                    <td style="padding: 8px 0; font-weight: bold; color: #1f2937;">${bookingDetails.checkOut}</td>
+                                    <td style="padding: 8px 0; font-weight: bold; color: #1f2937;">${bookingDetails.checkOut} at ${bookingDetails.checkOutTime || '11:00 AM'}</td>
                                 </tr>
                                 <tr>
                                     <td style="padding: 8px 0; color: #6b7280;">Guests:</td>
@@ -131,7 +132,7 @@ const sendGuestConfirmation = async (bookingDetails) => {
                         
                         <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
                             <p style="margin: 0; color: #92400e; font-size: 14px;">
-                                <strong>📍 Check-in Time:</strong> 12:00 PM | <strong>Check-out Time:</strong> 11:00 AM<br>
+                                <strong>📍 Check-in Time:</strong> ${formatTo12Hour(bookingDetails.checkInTime || '12:00')} | <strong>Check-out Time:</strong> ${bookingDetails.checkOutTime || '11:00 AM'}<br>
                                 Please carry a valid ID proof (Aadhar/Passport/DL).
                             </p>
                         </div>
@@ -154,7 +155,7 @@ const sendGuestConfirmation = async (bookingDetails) => {
                             </p>` : ''}
                         </div>
 
-                        {/* Terms & Conditions Section */}
+                        <!-- Terms & Conditions Section -->
                         <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #e5e7eb;">
                             <h4 style="margin: 0 0 10px 0; color: #374151; font-size: 14px;">📜 Terms & Conditions</h4>
                             <div style="color: #6b7280; font-size: 12px; line-height: 1.5; white-space: pre-wrap;">

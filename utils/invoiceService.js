@@ -54,7 +54,7 @@ const generateInvoicePDF = (bookingDetails) => {
         
         doc.font('Helvetica');
         const lodgeInfo = `${bookingDetails.lodgeName}\n(${bookingDetails.roomName})`;
-        const datesInfo = `${bookingDetails.checkIn}\nto ${bookingDetails.checkOut}`;
+        const datesInfo = `${bookingDetails.checkIn} (${bookingDetails.checkInTime})\nto ${bookingDetails.checkOut} (${bookingDetails.checkOutTime})`;
         generateTableRow(
             doc, 
             tableTop + 30, 

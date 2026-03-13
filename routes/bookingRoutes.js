@@ -4,6 +4,7 @@ const { Booking, Lodge, User, Room } = require('../models');
 const { sendBookingEmails } = require('../utils/emailService');
 const { generateInvoicePDF } = require('../utils/invoiceService');
 const { sendBookingNotification } = require('../utils/whatsappService');
+const { calculateCheckOutTime, formatTo12Hour } = require('../utils/timeUtils');
 
 // Generate unique booking ID
 const generateBookingId = () => {
@@ -78,7 +79,8 @@ router.get('/:id/invoice', async (req, res) => {
             phone: booking.customerMobile,
             checkIn: formatDate(booking.checkIn),
             checkOut: formatDate(booking.checkOut),
-            checkInTime: booking.checkInTime,
+            checkInTime: formatTo12Hour(booking.checkInTime || '12:00'),
+            checkOutTime: calculateCheckOutTime(booking.checkIn, booking.checkInTime),
             guests: booking.guests,
             amount: booking.totalAmount,
             amountPaid: booking.amountPaid,
@@ -248,6 +250,7 @@ router.post('/', async (req, res) => {
                 checkIn: formatDate(req.body.checkIn),
                 checkOut: formatDate(req.body.checkOut),
                 checkInTime: req.body.checkInTime || '12:00',
+                checkOutTime: calculateCheckOutTime(req.body.checkIn, req.body.checkInTime),
                 guests: req.body.guests || 1,
                 amount: totalAmount,
                 amountPaid: amountPaid,
