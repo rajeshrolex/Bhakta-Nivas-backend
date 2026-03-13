@@ -53,6 +53,10 @@ const lodgeSchema = new mongoose.Schema({
     isBlocked: {
         type: Boolean,
         default: false
+    },
+    terms: {
+        type: String,
+        default: '1. Check-in: 12:00 PM, Check-out: 11:00 AM.\n2. Please carry a valid ID proof (Aadhar/Passport/DL).\n3. Standard cancellation policies apply.'
     }
 }, {
     timestamps: true,

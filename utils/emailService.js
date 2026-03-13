@@ -135,6 +135,14 @@ const sendGuestConfirmation = async (bookingDetails) => {
                                 Please carry a valid ID proof (Aadhar/Passport/DL).
                             </p>
                         </div>
+
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="${bookingDetails.baseUrl}/api/bookings/${bookingDetails.bookingId}/invoice" 
+                               style="background: #2563eb; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">
+                                📄 Download Invoice PDF
+                            </a>
+                            <p style="color: #6b7280; font-size: 12px; margin-top: 8px;">Click here to download your official receipt</p>
+                        </div>
                         
                         <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #16a34a;">
                             <p style="margin: 0 0 10px 0; color: #166534; font-weight: bold; font-size: 15px;">📞 Lodge Contact Details</p>
@@ -143,9 +151,15 @@ const sendGuestConfirmation = async (bookingDetails) => {
                                 📱 Call: <a href="tel:${bookingDetails.lodgePhone.replace(/\s/g, '')}" style="color: #2563eb; text-decoration: none; font-weight: bold;">${bookingDetails.lodgePhone}</a>
                             </p>` : ''}
                             ${bookingDetails.lodgeWhatsapp ? `
-                            <p style="margin: 0; color: #374151; font-size: 14px;">
-                                💬 WhatsApp: <a href="https://wa.me/${bookingDetails.lodgeWhatsapp.replace(/[^0-9]/g, '')}?text=Hi, my booking ID is ${bookingDetails.bookingId}" style="color: #16a34a; text-decoration: none; font-weight: bold;">${bookingDetails.lodgeWhatsapp}</a>
                             </p>` : ''}
+                        </div>
+
+                        {/* Terms & Conditions Section */}
+                        <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #e5e7eb;">
+                            <h4 style="margin: 0 0 10px 0; color: #374151; font-size: 14px;">📜 Terms & Conditions</h4>
+                            <div style="color: #6b7280; font-size: 12px; line-height: 1.5; white-space: pre-wrap;">
+                                ${bookingDetails.terms || 'Standard terms and conditions apply.'}
+                            </div>
                         </div>
                         
                         <p style="color: #f97316; font-size: 16px; text-align: center; margin-top: 30px;">
@@ -276,6 +290,13 @@ const sendAdminNotification = async (bookingDetails) => {
                                 <td style="padding: 8px 0; font-weight: bold; color: #1f2937;">${bookingDetails.paymentId || 'N/A'}</td>
                             </tr>
                         </table>
+
+                        <div style="background: #f8fafc; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                            <p style="margin: 0; font-size: 12px; color: #64748b;">
+                                <strong>Terms agreed by guest:</strong><br>
+                                ${bookingDetails.terms ? bookingDetails.terms.substring(0, 150) + '...' : 'Standard terms applied.'}
+                            </p>
+                        </div>
                         
                         <p style="color: #6b7280; font-size: 14px; margin-top: 30px; text-align: center;">
                             This is an automated notification from Mantralayam Lodges Booking System

@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { Booking, Lodge, User, Room } = require('../models');
 const { sendBookingEmails } = require('../utils/emailService');
+const { generateInvoicePDF } = require('../utils/invoiceService');
+const { sendBookingNotification } = require('../utils/whatsappService');
 
 // Generate unique booking ID
 const generateBookingId = () => {
@@ -46,7 +48,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const booking = await Booking.findOne({ bookingId: req.params.id })
-            .populate('lodge', 'name slug address phone');
+            .populate('lodge', 'name address phone whatsapp terms');
 
         if (!booking) {
             return res.status(404).json({ message: 'Booking not found' });
@@ -54,6 +56,50 @@ router.get('/:id', async (req, res) => {
         res.json(booking);
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});
+
+// Download invoice PDF
+router.get('/:id/invoice', async (req, res) => {
+    try {
+        const booking = await Booking.findOne({ bookingId: req.params.id })
+            .populate('lodge', 'name address phone whatsapp');
+
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        const bookingDetails = {
+            bookingId: booking.bookingId,
+            lodgeName: booking.lodgeName,
+            roomName: booking.roomName,
+            guestName: booking.customerName,
+            email: booking.customerEmail,
+            phone: booking.customerMobile,
+            checkIn: formatDate(booking.checkIn),
+            checkOut: formatDate(booking.checkOut),
+            checkInTime: booking.checkInTime,
+            guests: booking.guests,
+            amount: booking.totalAmount,
+            amountPaid: booking.amountPaid,
+            balanceAmount: booking.balanceAmount,
+            paymentStatus: booking.paymentStatus,
+            paymentId: booking.paymentId,
+            terms: booking.lodge?.terms
+        };
+
+        const pdfBuffer = await generateInvoicePDF(bookingDetails);
+
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename=Invoice-${booking.bookingId}.pdf`,
+            'Content-Length': pdfBuffer.length
+        });
+
+        res.send(pdfBuffer);
+    } catch (err) {
+        console.error('Invoice generation error:', err);
+        res.status(500).json({ message: 'Failed to generate invoice' });
     }
 });
 
@@ -188,6 +234,10 @@ router.post('/', async (req, res) => {
 
         // Send email notifications (async, don't wait)
         if (req.body.customerDetails?.email) {
+            const protocol = req.protocol;
+            const host = req.get('host');
+            const baseUrl = `${protocol}://${host}`;
+
             sendBookingEmails({
                 bookingId,
                 lodgeName: lodge.name,
@@ -207,13 +257,29 @@ router.post('/', async (req, res) => {
                 paymentStatus: paymentStatus, // Use determined payment status
                 lodgeAdminEmail,
                 lodgePhone: lodge.phone || '',
-                lodgeWhatsapp: lodge.whatsapp || lodge.phone || ''
+                lodgeWhatsapp: lodge.whatsapp || lodge.phone || '',
+                terms: lodge.terms || '',
+                baseUrl: baseUrl
             }).then(result => {
                 console.log('Email notifications sent:', result);
             }).catch(err => {
                 console.error('Failed to send email notifications:', err);
             });
         }
+
+        // Send WhatsApp notification (async)
+        sendBookingNotification({
+            bookingId,
+            lodgeName: lodge.name,
+            guestName: req.body.customerDetails?.name,
+            phone: req.body.customerDetails?.mobile,
+            amountPaid: amountPaid,
+            balanceAmount: balanceAmount
+        }).then(sent => {
+            console.log('WhatsApp notification status:', sent ? 'Processed' : 'Failed');
+        }).catch(err => {
+            console.error('WhatsApp notification error:', err);
+        });
 
         res.status(201).json({ ...booking.toObject(), bookingId });
     } catch (err) {
