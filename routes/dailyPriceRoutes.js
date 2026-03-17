@@ -25,13 +25,18 @@ router.get('/', async (req, res) => {
 // Body: { lodgeId, date, roomType, price }
 router.post('/', async (req, res) => {
     try {
-        const { lodgeId, date, roomType, price } = req.body;
-        if (!lodgeId || !date || !roomType || price === undefined) {
-            return res.status(400).json({ message: 'lodgeId, date, roomType, and price are required' });
+        const { lodgeId, date, roomType, price, isBlocked } = req.body;
+        if (!lodgeId || !date || !roomType) {
+            return res.status(400).json({ message: 'lodgeId, date, and roomType are required' });
         }
+        
+        const updateData = {};
+        if (price !== undefined) updateData.price = price;
+        if (isBlocked !== undefined) updateData.isBlocked = isBlocked;
+
         const doc = await DailyPrice.findOneAndUpdate(
             { lodgeId, date, roomType },
-            { price },
+            updateData,
             { upsert: true, new: true }
         );
         res.json(doc);

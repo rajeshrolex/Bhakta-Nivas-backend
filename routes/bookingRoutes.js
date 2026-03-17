@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Booking, Lodge, User, Room } = require('../models');
+const { Booking, Lodge, User, Room, DailyPrice } = require('../models');
 const { sendBookingEmails } = require('../utils/emailService');
 const { generateInvoicePDF } = require('../utils/invoiceService');
 const { sendBookingNotification } = require('../utils/whatsappService');
@@ -165,6 +165,39 @@ router.post('/', async (req, res) => {
                     available: roomAvailability.available
                 });
             }
+
+            // Check if this specific room type is blocked on any date during the stay
+            if (req.body.checkIn && req.body.checkOut && req.body.room?.type) {
+                const checkInDate = new Date(req.body.checkIn);
+                const checkOutDate = new Date(req.body.checkOut);
+                
+                // Collect dates to check
+                const datesToCheck = [];
+                let cur = new Date(checkInDate);
+                while (cur < checkOutDate) {
+                    const y = cur.getFullYear();
+                    const m = String(cur.getMonth() + 1).padStart(2, '0');
+                    const d = String(cur.getDate()).padStart(2, '0');
+                    datesToCheck.push(`${y}-${m}-${d}`);
+                    cur.setDate(cur.getDate() + 1);
+                }
+
+                if (datesToCheck.length > 0) {
+                    const blockedPrices = await DailyPrice.find({
+                        lodgeId: req.body.lodgeId,
+                        roomType: req.body.room.type,
+                        date: { $in: datesToCheck },
+                        isBlocked: true
+                    });
+
+                    if (blockedPrices && blockedPrices.length > 0) {
+                        return res.status(400).json({
+                            message: `The selected room type (${req.body.room.type}) is unavailable on one or more of your selected dates.`
+                        });
+                    }
+                }
+            }
+
             console.log(`Room availability check passed: ${roomAvailability.available} available, booking ${roomsToBook}`);
         }
 

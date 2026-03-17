@@ -17,8 +17,12 @@ const dailyPriceSchema = new mongoose.Schema({
     },
     price: {
         type: Number,
-        required: true,
+        required: false,
         min: 0
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true
