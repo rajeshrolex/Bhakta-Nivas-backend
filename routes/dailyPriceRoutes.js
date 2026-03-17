@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { DailyPrice, Room } = require('../models');
+const { authenticate, isAdmin } = require('../middleware/auth');
 
 // GET /api/daily-prices?lodgeId=&month=YYYY-MM
 // Returns all price overrides for a lodge in a given month
@@ -23,7 +24,7 @@ router.get('/', async (req, res) => {
 
 // POST /api/daily-prices — upsert a price override
 // Body: { lodgeId, date, roomType, price }
-router.post('/', async (req, res) => {
+router.post('/', authenticate, isAdmin, async (req, res) => {
     try {
         const { lodgeId, date, roomType, price, isBlocked } = req.body;
         if (!lodgeId || !date || !roomType) {
@@ -46,7 +47,7 @@ router.post('/', async (req, res) => {
 });
 
 // DELETE /api/daily-prices/:id — remove a price override
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, isAdmin, async (req, res) => {
     try {
         await DailyPrice.findByIdAndDelete(req.params.id);
         res.json({ message: 'Price override removed' });
