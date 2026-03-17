@@ -62,7 +62,7 @@ const lodgesData = [
         whatsapp: "+91 9876543200",
         description: "Comfortable middle-tier residency catering to families and groups. Focuses on cleanliness and quick room service.",
         rooms: [
-            { type: "Non-AC", name: "Double Room", price: 800, maxOccupancy: 2, available: 8, totalRooms: 8, amenities: ["hotWater"] },
+            { type: "Non-AC", name: "Standard Room", price: 1500, maxOccupancy: 2, available: 8, totalRooms: 8, amenities: ["hotWater"] },
             { type: "AC", name: "Family AC Room", price: 1500, maxOccupancy: 4, available: 4, totalRooms: 4, amenities: ["ac", "hotWater", "tv"] }
         ]
     },
