@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const BASE = 'https://teal-butterfly-804797.hostingersite.com/api';
 
 async function test() {
