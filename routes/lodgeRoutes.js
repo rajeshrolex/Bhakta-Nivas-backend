@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Lodge, Room } = require('../models');
+const { Lodge, Room, Booking } = require('../models');
 const BlockedDate = require('../models/BlockedDate');
 
 // Get all lodges (with rooms)
@@ -29,6 +29,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get single lodge by slug
+// Accepts optional ?checkIn=YYYY-MM-DD&checkOut=YYYY-MM-DD to compute date-aware availability
 router.get('/:slug', async (req, res) => {
     try {
         const lodge = await Lodge.findOne({ slug: req.params.slug }).populate('rooms');
@@ -40,6 +41,41 @@ router.get('/:slug', async (req, res) => {
         const blockedDates = await BlockedDate.find({ lodgeId: lodge._id });
         const lodgeData = lodge.toJSON();
         lodgeData.blockedDates = blockedDates.map(b => b.date);
+
+        // --- Dynamic availability based on date range ---
+        const { checkIn, checkOut } = req.query;
+        if (checkIn && checkOut) {
+            const checkInDate = new Date(checkIn + 'T00:00:00');
+            const checkOutDate = new Date(checkOut + 'T00:00:00');
+
+            if (checkInDate < checkOutDate) {
+                // Find all active bookings for this lodge that overlap the requested dates.
+                // An overlap occurs when: booking.checkIn < checkOutDate AND booking.checkOut > checkInDate
+                const overlappingBookings = await Booking.find({
+                    lodgeId: lodge._id,
+                    status: { $nin: ['cancelled', 'checked-out'] },
+                    checkIn: { $lt: checkOutDate },
+                    checkOut: { $gt: checkInDate }
+                });
+
+                // Sum up rooms booked per room name for the overlapping period
+                const bookedCountByName = {};
+                for (const booking of overlappingBookings) {
+                    if (booking.roomName) {
+                        const count = parseInt(booking.rooms) || 1;
+                        bookedCountByName[booking.roomName] = (bookedCountByName[booking.roomName] || 0) + count;
+                    }
+                }
+
+                // Overwrite the available field on each room with dynamic count
+                lodgeData.rooms = lodgeData.rooms.map(room => {
+                    const totalRooms = room.totalRooms || 0;
+                    const bookedRooms = bookedCountByName[room.name] || 0;
+                    const dynamicAvailable = Math.max(0, totalRooms - bookedRooms);
+                    return { ...room, available: dynamicAvailable };
+                });
+            }
+        }
 
         res.json(lodgeData);
     } catch (err) {
