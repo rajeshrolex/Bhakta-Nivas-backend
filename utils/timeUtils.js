@@ -14,22 +14,40 @@ const formatTo12Hour = (time24) => {
 };
 
 /**
- * Calculate check-out time (23 hours after check-in time)
- * @param {string} checkInDate - ISO date string (not used for calculation currently but helpful for future)
- * @param {string} checkInTime - Time in "HH:mm" format
- * @returns {string} - Formatted check-out time like "11:00 AM"
+ * Calculate check-out time and date.
+ * Check-out time = check-in time - 1 hour (i.e. 23 hrs after check-in on final night).
+ * Check-out DATE uses the actual checkOut date if provided, otherwise next day.
+ *
+ * @param {string|Date} checkInDate  - Check-in date (ISO string or Date)
+ * @param {string}      checkInTime  - Time in "HH:mm" format (e.g. "12:00")
+ * @param {string|Date} [checkOutDate] - Actual check-out date (ISO string or Date). If given, used as check-out date.
+ * @returns {{ checkOutTime: string, checkOutDate: Date, checkOutTime12: string }}
  */
-const calculateCheckOutTime = (checkInDate, checkInTime) => {
+const calculateCheckOutTime = (checkInDate, checkInTime, checkOutDate) => {
     const [hours, minutes] = (checkInTime || '12:00').split(':');
     let h = parseInt(hours);
     let m = parseInt(minutes);
 
-    // Subtract 1 hour to get 23 hours later (next day)
+    // Check-out time is 1 hour before check-in time (23-hr stay per night)
     let outH = h - 1;
     if (outH < 0) outH = 23;
 
     const outTimeStr = `${String(outH).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-    return formatTo12Hour(outTimeStr);
+
+    // Determine check-out date
+    let outDate;
+    if (checkOutDate) {
+        outDate = new Date(checkOutDate);
+    } else {
+        outDate = new Date(checkInDate);
+        outDate.setDate(outDate.getDate() + 1);
+    }
+
+    return {
+        checkOutTime: outTimeStr,         // "HH:mm" 24h format
+        checkOutTime12: formatTo12Hour(outTimeStr), // "H:mm AM/PM"
+        checkOutDate: outDate             // Date object
+    };
 };
 
 module.exports = { formatTo12Hour, calculateCheckOutTime };
