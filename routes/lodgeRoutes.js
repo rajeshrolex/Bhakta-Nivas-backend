@@ -58,23 +58,46 @@ router.get('/:slug', async (req, res) => {
                     checkOut: { $gt: checkInDate }
                 });
 
-                // Sum up rooms booked per room name for the overlapping period
-                const bookedCountByName = {};
-                for (const booking of overlappingBookings) {
-                    if (booking.roomName) {
-                        const count = parseInt(booking.rooms) || 1;
-                        bookedCountByName[booking.roomName] = (bookedCountByName[booking.roomName] || 0) + count;
+                // Build list of each night in the requested stay [checkIn, checkOut)
+                const nights = [];
+                let cur = new Date(checkInDate);
+                while (cur < checkOutDate) {
+                    nights.push(new Date(cur));
+                    cur.setDate(cur.getDate() + 1);
+                }
+
+                // For each room name, find the PEAK occupancy across all nights.
+                // A booking covers a night if: booking.checkIn <= night < booking.checkOut
+                // We take the max so that e.g. 8 booked on night-1 + 8 booked on night-2
+                // correctly shows 8 peak (not 16 summed).
+                const peakOccupancyByName = {};
+                for (const night of nights) {
+                    const nightCountByName = {};
+                    for (const booking of overlappingBookings) {
+                        const bIn = new Date(booking.checkIn);
+                        const bOut = new Date(booking.checkOut);
+                        // booking covers this night if checkIn <= night < checkOut
+                        if (bIn <= night && night < bOut && booking.roomName) {
+                            const count = parseInt(booking.rooms) || 1;
+                            nightCountByName[booking.roomName] = (nightCountByName[booking.roomName] || 0) + count;
+                        }
+                    }
+                    // Update peak occupancy for each room name
+                    for (const [name, count] of Object.entries(nightCountByName)) {
+                        peakOccupancyByName[name] = Math.max(peakOccupancyByName[name] || 0, count);
                     }
                 }
 
                 // Overwrite the available field on each room with dynamic count
+                // available = totalRooms - peakOccupancy (the worst/busiest night in the stay)
                 lodgeData.rooms = lodgeData.rooms.map(room => {
                     const totalRooms = room.totalRooms || 0;
-                    const bookedRooms = bookedCountByName[room.name] || 0;
-                    const dynamicAvailable = Math.max(0, totalRooms - bookedRooms);
+                    const peakBooked = peakOccupancyByName[room.name] || 0;
+                    const dynamicAvailable = Math.max(0, totalRooms - peakBooked);
                     return { ...room, available: dynamicAvailable };
                 });
             }
+
         }
 
         res.json(lodgeData);
