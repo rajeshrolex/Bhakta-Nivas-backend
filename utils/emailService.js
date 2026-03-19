@@ -8,7 +8,9 @@ const createTransporter = () => {
     console.log('SMTP Password set:', process.env.SMTP_PASSWORD ? 'Yes' : 'No');
 
     return nodemailer.createTransport({
-        service: 'gmail',
+        host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+        port: process.env.SMTP_PORT || 465,
+        secure: true,
         auth: {
             user: process.env.SMTP_EMAIL,
             pass: process.env.SMTP_PASSWORD
@@ -85,7 +87,7 @@ const sendGuestConfirmation = async (bookingDetails) => {
         ` : '';
 
         const mailOptions = {
-            from: `"Mantralayam Lodges" <${process.env.SMTP_EMAIL}>`,
+            from: `"BhaktaNivas" <${process.env.SMTP_EMAIL}>`,
             to: bookingDetails.email,
             subject: balanceAmount > 0
                 ? `🙏 Booking Reserved (Balance ₹${balanceAmount} Due) - ${bookingDetails.lodgeName}`
@@ -226,7 +228,7 @@ const sendAdminNotification = async (bookingDetails) => {
         `;
 
         const mailOptions = {
-            from: `"Mantralayam Lodges System" <${process.env.SMTP_EMAIL}>`,
+            from: `"BhaktaNivas System" <${process.env.SMTP_EMAIL}>`,
             to: adminEmail,
             subject: balanceAmount > 0
                 ? `🔔 New Booking (Balance ₹${balanceAmount} to Collect) - ${bookingDetails.lodgeName}`
@@ -300,7 +302,7 @@ const sendAdminNotification = async (bookingDetails) => {
                         </div>
                         
                         <p style="color: #6b7280; font-size: 14px; margin-top: 30px; text-align: center;">
-                            This is an automated notification from Mantralayam Lodges Booking System
+                            This is an automated notification from BhaktaNivas Booking System
                         </p>
                     </div>
                 </div>
