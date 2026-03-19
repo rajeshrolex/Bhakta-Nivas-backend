@@ -248,23 +248,11 @@ router.post('/', async (req, res) => {
             status: 'confirmed'
         });
 
-        // Update room availability - decrement by number of rooms booked
-        console.log('Room update check:', { roomName: req.body.room?.name, rooms: req.body.rooms, lodgeId: req.body.lodgeId });
+        // Room availability update removed as it's now handled dynamically in lodgeRoutes.js
         if (req.body.room?.name) {
-            const roomsBooked = parseInt(req.body.rooms) || 1;
-            const updateResult = await Room.findOneAndUpdate(
-                {
-                    lodgeId: req.body.lodgeId,
-                    name: req.body.room.name
-                },
-                {
-                    $inc: { available: -roomsBooked }
-                },
-                { new: true }
-            );
-            console.log(`Room availability updated: ${req.body.room.name} decreased by ${roomsBooked}`, updateResult ? `New availability: ${updateResult.available}` : 'Room not found');
+            console.log(`Dynamic availability will account for this booking: ${req.body.room.name}`);
         } else {
-            console.log('Room availability NOT updated - missing room name');
+            console.log('Missing room name in booking request');
         }
 
         // Send email notifications (async, don't wait)
@@ -356,33 +344,9 @@ router.put('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Booking not found' });
         }
 
-        // ONLY restore room if transitioning FROM an active status TO cancelled/checked-out
-        const wasActive = existingBooking.status !== 'cancelled' && existingBooking.status !== 'checked-out';
-        const isNowInactive = newStatus === 'cancelled' || newStatus === 'checked-out';
-
+        // Room availability restoration removed as it's now handled dynamically in lodgeRoutes.js
         if (wasActive && isNowInactive && existingBooking) {
-            const roomsToRestore = parseInt(existingBooking.rooms) || 1;
-            if (existingBooking.roomName && existingBooking.lodgeId) {
-                await Room.findOneAndUpdate(
-                    {
-                        lodgeId: existingBooking.lodgeId,
-                        name: existingBooking.roomName
-                    },
-                    [
-                        {
-                            $set: {
-                                available: {
-                                    $min: [
-                                        { $add: ["$available", roomsToRestore] },
-                                        { $ifNull: ["$totalRooms", "$available"] } // Fallback to current available if totalRooms is missing
-                                    ]
-                                }
-                            }
-                        }
-                    ]
-                );
-                console.log(`Room availability restored (${newStatus}): ${existingBooking.roomName} increased by ${roomsToRestore}`);
-            }
+            console.log(`Booking ${newStatus}: dynamic availability will reflect this change for ${existingBooking.roomName}`);
         }
 
         res.json(booking);

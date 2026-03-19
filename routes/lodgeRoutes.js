@@ -91,9 +91,9 @@ router.get('/:slug', async (req, res) => {
                 // Overwrite the available field on each room with dynamic count
                 // available = totalRooms - peakOccupancy (the worst/busiest night in the stay)
                 lodgeData.rooms = lodgeData.rooms.map(room => {
-                    const totalRooms = room.totalRooms || 0;
+                    const baseCapacity = room.available || 0;
                     const peakBooked = peakOccupancyByName[room.name] || 0;
-                    const dynamicAvailable = Math.max(0, totalRooms - peakBooked);
+                    const dynamicAvailable = Math.max(0, baseCapacity - peakBooked);
                     return { ...room, available: dynamicAvailable };
                 });
             }
