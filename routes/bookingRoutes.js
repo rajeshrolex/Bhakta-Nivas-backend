@@ -15,7 +15,10 @@ const generateBookingId = () => {
 const formatDate = (date) => {
     if (!date) return 'N/A';
     const d = new Date(date);
-    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
 };
 
 // Get all bookings (with optional lodge filter for admins)
@@ -72,8 +75,10 @@ router.get('/:id/invoice', async (req, res) => {
 
         const bookingDetails = {
             bookingId: booking.bookingId,
+            bookingDate: formatDate(booking.createdAt),
             lodgeName: booking.lodgeName,
             roomName: booking.roomName,
+            roomType: booking.roomType,
             guestName: booking.customerName,
             email: booking.customerEmail,
             phone: booking.customerMobile,
@@ -85,6 +90,7 @@ router.get('/:id/invoice', async (req, res) => {
             amount: booking.totalAmount,
             amountPaid: booking.amountPaid,
             balanceAmount: booking.balanceAmount,
+            paymentMethod: booking.paymentMethod,
             paymentStatus: booking.paymentStatus,
             paymentId: booking.paymentId,
             terms: booking.lodge?.terms
