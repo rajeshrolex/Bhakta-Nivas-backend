@@ -23,31 +23,44 @@ const formatTo12Hour = (time24) => {
  * @param {string|Date} [checkOutDate] - Actual check-out date (ISO string or Date). If given, used as check-out date.
  * @returns {{ checkOutTime: string, checkOutDate: Date, checkOutTime12: string }}
  */
-const calculateCheckOutTime = (checkInDate, checkInTime, checkOutDate) => {
-    const [hours, minutes] = (checkInTime || '12:00').split(':');
-    let h = parseInt(hours);
-    let m = parseInt(minutes);
+const calculateCheckOutTime = (checkInDate, checkInTime = '12:00', checkOutDate = null) => {
+    try {
+        const [hours, minutes] = checkInTime.split(':').map(Number);
+        const checkIn = new Date(checkInDate);
+        checkIn.setHours(hours, minutes, 0, 0);
 
-    // Check-out time is 1 hour before check-in time (23-hr stay per night)
-    let outH = h - 1;
-    if (outH < 0) outH = 23;
+        // Determine nights
+        let nights = 1;
+        if (checkOutDate) {
+            const coDay = new Date(checkOutDate);
+            coDay.setHours(0, 0, 0, 0);
+            const ciDay = new Date(checkInDate);
+            ciDay.setHours(0, 0, 0, 0);
+            const diffNights = Math.round((coDay - ciDay) / (1000 * 60 * 60 * 24));
+            if (diffNights > 0) nights = diffNights;
+        }
 
-    const outTimeStr = `${String(outH).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        // Total stay = (nights * 24 - 1) hours
+        const totalHours = nights * 24 - 1;
+        const checkOut = new Date(checkIn.getTime() + totalHours * 60 * 60 * 1000);
 
-    // Determine check-out date
-    let outDate;
-    if (checkOutDate) {
-        outDate = new Date(checkOutDate);
-    } else {
-        outDate = new Date(checkInDate);
-        outDate.setDate(outDate.getDate() + 1);
+        const coHours = String(checkOut.getHours()).padStart(2, '0');
+        const coMinutes = String(checkOut.getMinutes()).padStart(2, '0');
+        const outTimeStr = `${coHours}:${coMinutes}`;
+
+        return {
+            checkOutTime: outTimeStr,
+            checkOutTime12: formatTo12Hour(outTimeStr),
+            checkOutDate: checkOut
+        };
+    } catch (error) {
+        console.error('Error calculating checkout time:', error);
+        return {
+            checkOutTime: '11:00',
+            checkOutTime12: '11:00 AM',
+            checkOutDate: checkOutDate ? new Date(checkOutDate) : new Date()
+        };
     }
-
-    return {
-        checkOutTime: outTimeStr,         // "HH:mm" 24h format
-        checkOutTime12: formatTo12Hour(outTimeStr), // "H:mm AM/PM"
-        checkOutDate: outDate             // Date object
-    };
 };
 
 module.exports = { formatTo12Hour, calculateCheckOutTime };
